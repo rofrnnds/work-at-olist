@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Channel, Category
+from apps.channelmanager.models import Channel, Category
 
 
 class TestChannel(TestCase):
