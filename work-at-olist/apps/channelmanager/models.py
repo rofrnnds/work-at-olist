@@ -6,7 +6,7 @@ class Channel(models.Model):
     name = models.CharField(max_length=120, unique=True)
 
     def __str__(self):
-        self.name
+        return self.name
 
 
 class Category(models.Model):
@@ -20,4 +20,4 @@ class Category(models.Model):
         verbose_name_plural = "categories"
 
     def __str__(self):
-        self.name
+        return self.name
