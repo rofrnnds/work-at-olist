@@ -1,8 +1,10 @@
 from django.db import models
+import uuid
 
 
 class Channel(models.Model):
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=120, unique=True)
 
     def __str__(self):
@@ -11,6 +13,7 @@ class Channel(models.Model):
 
 class Category(models.Model):
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=120)
     channel = models.ForeignKey(Channel, related_name="categories")
     parent = models.ForeignKey(
