@@ -2,7 +2,7 @@ from django.test import TestCase
 from apps.channelmanager.models import Channel, Category
 
 
-class TestChannel(TestCase):
+class ChannelModelTest(TestCase):
 
     def setUp(self):
         self.channels_name = "a testing channel"
@@ -16,7 +16,7 @@ class TestChannel(TestCase):
         self.assertEqual(self.channel.name, self.channels_name)
 
 
-class TestCategory(TestCase):
+class CategoryModelTest(TestCase):
 
     def setUp(self):
         self.categorys_name = "a testing category"
