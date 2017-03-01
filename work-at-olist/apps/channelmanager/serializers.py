@@ -2,23 +2,32 @@ from rest_framework import serializers
 from .models import Channel, Category
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.HyperlinkedModelSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='categories-api-detail')
+
     class Meta:
         model = Category
-        fields = ('id', 'name')
+        fields = ('url', 'id', 'name')
 
 
-class ChannelSerializer(serializers.ModelSerializer):
+class ChannelSerializer(serializers.HyperlinkedModelSerializer):
+
+    url = serializers.HyperlinkedIdentityField(view_name='channels-api-detail')
 
     class Meta:
         model = Channel
-        fields = ('id', 'name')
+        fields = ('url', 'id', 'name')
 
 
-class CategoryTreeSerializer(serializers.ModelSerializer):
+class CategoryTreeSerializer(serializers.HyperlinkedModelSerializer):
     parent = CategorySerializer(many=False, read_only=True)
     children = CategorySerializer(many=True, read_only=True)
 
+    url = serializers.HyperlinkedIdentityField(
+        view_name='categories-api-detail')
+
     class Meta:
         model = Category
-        fields = ('parent', 'id', 'name', 'children')
+        fields = ('url', 'parent', 'id', 'name', 'children')

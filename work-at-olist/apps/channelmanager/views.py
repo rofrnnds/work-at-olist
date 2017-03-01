@@ -16,11 +16,13 @@ class CategoryViewSet(viewsets.ViewSet):
 
     def list(self, request):
         queryset = Category.objects.all()
-        serializer = CategorySerializer(queryset, many=True)
+        serializer = CategorySerializer(
+            queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         queryset = Category.objects.all()
         category = get_object_or_404(queryset, pk=pk)
-        serializer = CategoryTreeSerializer(category)
+        serializer = CategoryTreeSerializer(
+            category, context={'request': request})
         return Response(serializer.data)
