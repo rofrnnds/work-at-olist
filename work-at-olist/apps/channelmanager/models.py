@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Channel(models.Model):
@@ -11,15 +12,17 @@ class Channel(models.Model):
         return self.name
 
 
-class Category(models.Model):
+class Category(MPTTModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=120)
     channel = models.ForeignKey(Channel, related_name="categories")
-    parent = models.ForeignKey(
-        "self", related_name="children", blank=True, null=True)
+    parent = TreeForeignKey("self", related_name="children", blank=True,
+                            null=True, db_index=True)
 
-    class Meta:
+    class MPTTMeta:
+        db_table = "categories"
+        order_insertion_by = ['name']
         verbose_name_plural = "categories"
 
     def __str__(self):

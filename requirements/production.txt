@@ -4,3 +4,4 @@ djangorestframework==3.5.4
 prettyconf==1.2.3
 psycopg2==2.6.2
 whitenoise==3.3.0
+django-mptt==0.8.7
