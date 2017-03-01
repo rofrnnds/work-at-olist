@@ -23,6 +23,8 @@ class Category(MPTTModel):
     class MPTTMeta:
         db_table = "categories"
         order_insertion_by = ['name']
+
+    class Meta:
         verbose_name_plural = "categories"
 
     def __str__(self):
