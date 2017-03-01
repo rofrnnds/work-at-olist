@@ -7,22 +7,32 @@ class ChannelAPITest(APITestCase):
 
     def setUp(self):
         self.test_channel = Channel.objects.create(name='wallmart')
+
         Channel.objects.create(name='americanas')
         Channel.objects.create(name='amazon')
 
+        self.response_list = self.client.get(reverse('channels-api-list'),
+                                             format='json').json()
+        self.response_detail = self.client.get(
+            reverse('channels-api-detail',
+                    args=[str(self.test_channel.id)]), format='json').json()
+
     def test_list(self):
-        url = reverse('channels-api-list')
-        response = self.client.get(url, format='json').json()
-        self.assertEquals(response[0]['name'], 'wallmart')
-        self.assertEquals(response[1]['name'], 'americanas')
-        self.assertEquals(response[2]['name'], 'amazon')
+        self.assertEquals(self.response_list[0]['name'], 'wallmart')
+        self.assertEquals(self.response_list[1]['name'], 'americanas')
+        self.assertEquals(self.response_list[2]['name'], 'amazon')
 
     def test_retrieve(self):
-        url = reverse('channels-api-detail', args=[str(self.test_channel.id)])
-        response = self.client.get(url, format='json').json()
-        channel = Channel.objects.get(id=self.test_channel.id)
-        self.assertEqual(response['id'], str(channel.id))
-        self.assertEqual(response['name'], channel.name)
+        self.assertEqual(self.response_detail['id'], str(self.test_channel.id))
+        self.assertEqual(self.response_detail['name'], self.test_channel.name)
+
+    def test_list_hyperlink(self):
+        hyperlink_response = self.client.get(self.response_list[0]['url'])
+        self.assertEqual(hyperlink_response.status_code, 200)
+
+    def test_detail_hyperlink(self):
+        hyperlink_response = self.client.get(self.response_detail['url'])
+        self.assertEqual(hyperlink_response.status_code, 200)
 
 
 class CategoryAPITest(APITestCase):
@@ -32,23 +42,31 @@ class CategoryAPITest(APITestCase):
         self.test_category = Category.objects.create(channel=self.test_channel,
                                                      name='Games')
         self.test_subcategory = Category.objects.create(
-            channel=self.test_channel,
-            name='XBOX 360',
+            channel=self.test_channel, name='XBOX 360',
             parent=self.test_category)
+        self.response_list = self.client.get(reverse('categories-api-list'),
+                                             format='json').json()
+        self.response_detail = self.client.get(
+            reverse('categories-api-detail',
+                    args=[str(self.test_category.id)]), format='json').json()
 
     def test_list(self):
-        url = reverse('categories-api-list')
-        response = self.client.get(url, format='json').json()
-        self.assertEquals(response[0]['name'], 'Games')
-        self.assertEquals(response[1]['name'], 'XBOX 360')
+        self.assertEquals(self.response_list[0]['name'], 'Games')
+        self.assertEquals(self.response_list[1]['name'], 'XBOX 360')
 
     def test_retrieve(self):
-        url = reverse('categories-api-detail',
-                      args=[str(self.test_category.id)])
-        response = self.client.get(url, format='json').json()
-        category = Category.objects.get(id=self.test_category.id)
-        self.assertEqual(response['parent'], category.parent)
-        self.assertEqual(response['id'], str(self.test_category.id))
-        self.assertEqual(response['name'], self.test_category.name)
-        self.assertEqual(response['children'][0]['name'],
+        self.assertEqual(self.response_detail['parent'],
+                         self.test_category.parent)
+        self.assertEqual(self.response_detail['id'],
+                         str(self.test_category.id))
+        self.assertEqual(self.response_detail['name'], self.test_category.name)
+        self.assertEqual(self.response_detail['children'][0]['name'],
                          self.test_subcategory.name)
+
+    def test_list_hyperlink(self):
+        hyperlink_response = self.client.get(self.response_list[0]['url'])
+        self.assertEqual(hyperlink_response.status_code, 200)
+
+    def test_detail_hyperlink(self):
+        hyperlink_response = self.client.get(self.response_detail['url'])
+        self.assertEqual(hyperlink_response.status_code, 200)
