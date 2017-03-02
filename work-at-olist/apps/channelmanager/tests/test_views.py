@@ -44,6 +44,9 @@ class CategoryAPITest(APITestCase):
         self.test_subcategory = Category.objects.create(
             channel=self.test_channel, name='XBOX 360',
             parent=self.test_category)
+        self.test_subsubcategory = Category.objects.create(
+            channel=self.test_channel, name='Accessories',
+            parent=self.test_subcategory)
         self.response_list = self.client.get(reverse('categories-api-list'),
                                              format='json').json()
         self.response_detail = self.client.get(
@@ -55,13 +58,9 @@ class CategoryAPITest(APITestCase):
         self.assertEquals(self.response_list[1]['name'], 'XBOX 360')
 
     def test_retrieve(self):
-        self.assertEqual(self.response_detail['parent'],
-                         self.test_category.parent)
         self.assertEqual(self.response_detail['id'],
                          str(self.test_category.id))
         self.assertEqual(self.response_detail['name'], self.test_category.name)
-        self.assertEqual(self.response_detail['children'][0]['name'],
-                         self.test_subcategory.name)
 
     def test_list_hyperlink(self):
         hyperlink_response = self.client.get(self.response_list[0]['url'])
@@ -70,3 +69,12 @@ class CategoryAPITest(APITestCase):
     def test_detail_hyperlink(self):
         hyperlink_response = self.client.get(self.response_detail['url'])
         self.assertEqual(hyperlink_response.status_code, 200)
+
+    def test_retrieve_with_parent_and_children(self):
+        self.assertEqual(self.response_detail['parent'],
+                         self.test_category.parent)
+        self.assertEqual(self.response_detail['children'][0]['name'],
+                         self.test_subcategory.name)
+        self.assertEqual(
+            self.response_detail['children'][0]['children'][0]['name'],
+            self.test_subsubcategory.name)
