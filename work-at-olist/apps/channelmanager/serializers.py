@@ -2,14 +2,11 @@ from rest_framework import serializers
 from .models import Channel, Category
 
 
-class CategorySerializer(serializers.HyperlinkedModelSerializer):
+class RecursiveField(serializers.Serializer):
 
-    url = serializers.HyperlinkedIdentityField(
-        view_name='categories-api-detail')
-
-    class Meta:
-        model = Category
-        fields = ('url', 'id', 'name')
+    def to_representation(self, value):
+        serializer = self.parent.parent.__class__(value, context=self.context)
+        return serializer.data
 
 
 class ChannelSerializer(serializers.HyperlinkedModelSerializer):
@@ -18,16 +15,26 @@ class ChannelSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Channel
-        fields = ('url', 'id', 'name')
+        fields = ('name', 'id', 'url')
 
 
-class CategoryTreeSerializer(serializers.HyperlinkedModelSerializer):
-    parent = CategorySerializer(many=False, read_only=True)
-    children = CategorySerializer(many=True, read_only=True)
+class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
     url = serializers.HyperlinkedIdentityField(
         view_name='categories-api-detail')
 
     class Meta:
         model = Category
-        fields = ('url', 'parent', 'id', 'name', 'children')
+        fields = ('name', 'id', 'url')
+
+
+class CategoryTreeSerializer(serializers.HyperlinkedModelSerializer):
+
+    parent = CategorySerializer(many=False, read_only=True)
+    children = RecursiveField(many=True, required=False)
+    url = serializers.HyperlinkedIdentityField(
+        view_name='categories-api-detail')
+
+    class Meta:
+        model = Category
+        fields = ('name', 'id', 'url', 'children', 'parent',)
