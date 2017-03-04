@@ -9,7 +9,29 @@ class RecursiveField(serializers.Serializer):
         return serializer.data
 
 
-class ChannelSerializer(serializers.HyperlinkedModelSerializer):
+class CategoryListSerializer(serializers.HyperlinkedModelSerializer):
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name='categories-api-detail', lookup_field='slug')
+
+    class Meta:
+        model = Category
+        fields = ('name', 'url')
+
+
+class CategoryDetailSerializer(serializers.HyperlinkedModelSerializer):
+
+    parent = CategoryListSerializer(many=False, read_only=True)
+    children = RecursiveField(many=True, required=False)
+    url = serializers.HyperlinkedIdentityField(
+        view_name='categories-api-detail', lookup_field='slug')
+
+    class Meta:
+        model = Category
+        fields = ('name', 'url', 'children', 'parent',)
+
+
+class ChannelListSerializer(serializers.HyperlinkedModelSerializer):
 
     url = serializers.HyperlinkedIdentityField(view_name='channels-api-detail',
                                                lookup_field='slug')
@@ -19,23 +41,13 @@ class ChannelSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('name', 'url')
 
 
-class CategorySerializer(serializers.HyperlinkedModelSerializer):
+class ChannelDetailSerializer(serializers.HyperlinkedModelSerializer):
 
-    url = serializers.HyperlinkedIdentityField(
-        view_name='categories-api-detail', lookup_field='slug')
+    url = serializers.HyperlinkedIdentityField(view_name='channels-api-detail',
+                                               lookup_field='slug')
 
-    class Meta:
-        model = Category
-        fields = ('name', 'url')
-
-
-class CategoryTreeSerializer(serializers.HyperlinkedModelSerializer):
-
-    parent = CategorySerializer(many=False, read_only=True)
-    children = RecursiveField(many=True, required=False)
-    url = serializers.HyperlinkedIdentityField(
-        view_name='categories-api-detail', lookup_field='slug')
+    categories = CategoryListSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Category
-        fields = ('name', 'url', 'children', 'parent',)
+        model = Channel
+        fields = ('name', 'url', 'categories')

@@ -10,6 +10,8 @@ class ChannelAPITest(APITestCase):
 
         Channel.objects.create(name='americanas')
         Channel.objects.create(name='amazon')
+        Category.objects.create(name='Books', channel=self.test_channel)
+        Category.objects.create(name='Games', channel=self.test_channel)
 
         self.response_list = self.client.get(reverse('channels-api-list'),
                                              format='json').json()
@@ -24,6 +26,8 @@ class ChannelAPITest(APITestCase):
 
     def test_retrieve(self):
         self.assertEqual(self.response_detail['name'], self.test_channel.name)
+        self.assertIn('Books', str(self.response_detail['categories']))
+        self.assertIn('Games', str(self.response_detail['categories']))
 
     def test_list_hyperlink(self):
         hyperlink_response = self.client.get(self.response_list[0]['url'])
