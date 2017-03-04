@@ -16,7 +16,7 @@ class ChannelSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Channel
-        fields = ('name', 'slug', 'url')
+        fields = ('name', 'url')
 
 
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
@@ -26,7 +26,7 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('name', 'slug', 'url')
+        fields = ('name', 'url')
 
 
 class CategoryTreeSerializer(serializers.HyperlinkedModelSerializer):
@@ -38,4 +38,4 @@ class CategoryTreeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('name', 'slug', 'url', 'children', 'parent',)
+        fields = ('name', 'url', 'children', 'parent',)

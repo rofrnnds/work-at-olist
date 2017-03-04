@@ -23,7 +23,6 @@ class ChannelAPITest(APITestCase):
         self.assertEquals(self.response_list[2]['name'], 'amazon')
 
     def test_retrieve(self):
-        self.assertEqual(self.response_detail['slug'], self.test_channel.slug)
         self.assertEqual(self.response_detail['name'], self.test_channel.name)
 
     def test_list_hyperlink(self):
@@ -62,8 +61,6 @@ class CategoryAPITest(APITestCase):
         self.assertEquals(self.response_list[1]['name'], 'XBOX 360')
 
     def test_retrieve(self):
-        self.assertEqual(self.response_detail['slug'],
-                         self.test_category.slug)
         self.assertEqual(self.response_detail['name'], self.test_category.name)
 
     def test_list_hyperlink(self):
