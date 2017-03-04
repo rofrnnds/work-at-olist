@@ -8,6 +8,18 @@ from rest_framework.response import Response
 
 class ChannelViewSet(viewsets.ViewSet):
 
+    """
+    API endpoint that allows channels to be viewed
+
+    list:
+    Return all channels
+
+    retrieve:
+    Return a channel with all their categories and subcategories
+    (flat representation)
+
+    """
+
     def list(self, request):
         queryset = Channel.objects.all()
         serializer = ChannelListSerializer(queryset, many=True,
@@ -25,6 +37,18 @@ class ChannelViewSet(viewsets.ViewSet):
 
 
 class CategoryViewSet(viewsets.ViewSet):
+
+    """
+    API endpoint that allows categories to be viewed
+
+    list:
+    Return all categories
+
+    retrieve:
+    Return a category with all their subcategories
+    (hierarchical representation)
+
+    """
 
     def list(self, request):
         queryset = Category.objects.all()
