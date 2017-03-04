@@ -1,6 +1,7 @@
 from django.test import TestCase
 from apps.channelmanager.models import Channel, Category
 from django.db.models import UUIDField
+import shortuuid
 
 
 class ChannelModelTest(TestCase):
@@ -15,6 +16,9 @@ class ChannelModelTest(TestCase):
 
     def test_channel_model_has_a_unique_identifier_field(self):
         self.assertTrue(isinstance(Channel._meta.get_field("id"), UUIDField))
+
+    def test_channel_has_a_slug_that_encondes_uuid(self):
+        self.assertEqual(self.channel.slug, shortuuid.encode(self.channel.id))
 
 
 class CategoryModelTest(TestCase):
@@ -37,3 +41,7 @@ class CategoryModelTest(TestCase):
             name="a testing sub-category", channel=self.channel,
             parent=self.category)
         self.assertIsNotNone(self.subcategory.parent)
+
+    def test_channel_has_a_slug_that_encondes_uuid(self):
+        self.assertEqual(self.category.slug,
+                         shortuuid.encode(self.category.id))

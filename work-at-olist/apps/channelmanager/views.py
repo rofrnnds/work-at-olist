@@ -10,6 +10,7 @@ class ChannelViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = Channel.objects.all()
     serializer_class = ChannelSerializer
+    lookup_field = ('slug')
 
 
 class CategoryViewSet(viewsets.ViewSet):
@@ -20,9 +21,11 @@ class CategoryViewSet(viewsets.ViewSet):
             queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, slug=None):
         queryset = Category.objects.all()
-        category = get_object_or_404(queryset, pk=pk)
+        category = get_object_or_404(queryset, slug=slug)
         serializer = CategoryTreeSerializer(
             category, context={'request': request})
         return Response(serializer.data)
+
+    lookup_field = ('slug')

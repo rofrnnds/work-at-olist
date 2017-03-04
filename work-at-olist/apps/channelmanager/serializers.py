@@ -11,21 +11,22 @@ class RecursiveField(serializers.Serializer):
 
 class ChannelSerializer(serializers.HyperlinkedModelSerializer):
 
-    url = serializers.HyperlinkedIdentityField(view_name='channels-api-detail')
+    url = serializers.HyperlinkedIdentityField(view_name='channels-api-detail',
+                                               lookup_field='slug')
 
     class Meta:
         model = Channel
-        fields = ('name', 'id', 'url')
+        fields = ('name', 'slug', 'url')
 
 
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
     url = serializers.HyperlinkedIdentityField(
-        view_name='categories-api-detail')
+        view_name='categories-api-detail', lookup_field='slug')
 
     class Meta:
         model = Category
-        fields = ('name', 'id', 'url')
+        fields = ('name', 'slug', 'url')
 
 
 class CategoryTreeSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,8 +34,8 @@ class CategoryTreeSerializer(serializers.HyperlinkedModelSerializer):
     parent = CategorySerializer(many=False, read_only=True)
     children = RecursiveField(many=True, required=False)
     url = serializers.HyperlinkedIdentityField(
-        view_name='categories-api-detail')
+        view_name='categories-api-detail', lookup_field='slug')
 
     class Meta:
         model = Category
-        fields = ('name', 'id', 'url', 'children', 'parent',)
+        fields = ('name', 'slug', 'url', 'children', 'parent',)

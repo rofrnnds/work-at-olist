@@ -15,7 +15,7 @@ class ChannelAPITest(APITestCase):
                                              format='json').json()
         self.response_detail = self.client.get(
             reverse('channels-api-detail',
-                    args=[str(self.test_channel.id)]), format='json').json()
+                    args=[str(self.test_channel.slug)]), format='json').json()
 
     def test_list(self):
         self.assertEquals(self.response_list[0]['name'], 'wallmart')
@@ -23,7 +23,7 @@ class ChannelAPITest(APITestCase):
         self.assertEquals(self.response_list[2]['name'], 'amazon')
 
     def test_retrieve(self):
-        self.assertEqual(self.response_detail['id'], str(self.test_channel.id))
+        self.assertEqual(self.response_detail['slug'], self.test_channel.slug)
         self.assertEqual(self.response_detail['name'], self.test_channel.name)
 
     def test_list_hyperlink(self):
@@ -33,6 +33,10 @@ class ChannelAPITest(APITestCase):
     def test_detail_hyperlink(self):
         hyperlink_response = self.client.get(self.response_detail['url'])
         self.assertEqual(hyperlink_response.status_code, 200)
+
+    def test_channel_id_is_not_exposed_in_API(self):
+        self.assertNotIn(str(self.test_channel.id), str(self.response_list))
+        self.assertNotIn(str(self.test_channel.id), str(self.response_detail))
 
 
 class CategoryAPITest(APITestCase):
@@ -51,15 +55,15 @@ class CategoryAPITest(APITestCase):
                                              format='json').json()
         self.response_detail = self.client.get(
             reverse('categories-api-detail',
-                    args=[str(self.test_category.id)]), format='json').json()
+                    args=[str(self.test_category.slug)]), format='json').json()
 
     def test_list(self):
         self.assertEquals(self.response_list[0]['name'], 'Games')
         self.assertEquals(self.response_list[1]['name'], 'XBOX 360')
 
     def test_retrieve(self):
-        self.assertEqual(self.response_detail['id'],
-                         str(self.test_category.id))
+        self.assertEqual(self.response_detail['slug'],
+                         self.test_category.slug)
         self.assertEqual(self.response_detail['name'], self.test_category.name)
 
     def test_list_hyperlink(self):
@@ -78,3 +82,7 @@ class CategoryAPITest(APITestCase):
         self.assertEqual(
             self.response_detail['children'][0]['children'][0]['name'],
             self.test_subsubcategory.name)
+
+    def test_category_id_is_not_exposed_in_API(self):
+        self.assertNotIn(str(self.test_category.id), str(self.response_list))
+        self.assertNotIn(str(self.test_category.id), str(self.response_detail))
